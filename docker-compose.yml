@@ -1,0 +1,43 @@
+version: "3"
+
+networks:
+  lbs.net:
+    driver: bridge
+
+services:
+  api.commande:
+    container_name: api.commande
+    image: node
+    ports:
+      - "19080:3000"
+    env_file:
+      - ./commande/.env.dev
+    volumes:
+      - ./commande:/usr/src/app
+      - ./commande/node_modules:/usr/src/outside/node_modules
+    working_dir: /usr/src/app
+    command: bash -c 'npm i && npm run dev'
+    networks:
+      - lbs.net
+    links:
+      - mysql.commande
+  mysql.commande:
+    image: mariadb:latest
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci
+    env_file:
+      - ./mysql/.env.dev
+    ports:
+      - "3307:3306"
+    networks:
+      - lbs.net
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+  adminer.commande:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - lbs.net
+    links:
+      - mysql.commande

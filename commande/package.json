@@ -1,0 +1,24 @@
+{
+  "name": "commande",
+  "version": "1.0.0",
+  "description": "API de Commande du projet Le Bon Sandwich",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon --legacy-watch app.js"
+  },
+  "author": "Alexandre Leroux <alex@sherpa.one> (https://sherpa.one)",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "moment": "^2.29.1",
+    "mysql": "^2.18.1",
+    "uuid": "^8.3.2",
+    "validator": "^13.5.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
