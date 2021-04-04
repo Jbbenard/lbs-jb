@@ -5,6 +5,9 @@ networks:
     driver: bridge
 
 services:
+  ##################
+  ## API COMMANDE ##
+  ##################
   api.commande:
     container_name: api.commande
     image: node
@@ -16,12 +19,13 @@ services:
       - ./commande:/usr/src/app
       - ./commande/node_modules:/usr/src/outside/node_modules
     working_dir: /usr/src/app
-    command: bash -c 'npm i && npm run dev'
+    command: bash -c 'npm i && npm run start'
     networks:
       - lbs.net
     links:
       - mysql.commande
   mysql.commande:
+    container_name: mysql.commande
     image: mariadb:latest
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci
     env_file:
@@ -33,6 +37,7 @@ services:
     volumes:
       - ./mysql_data:/var/lib/mysql
   adminer.commande:
+    container_name: adminer.commande
     image: adminer
     restart: always
     ports:
@@ -41,3 +46,41 @@ services:
       - lbs.net
     links:
       - mysql.commande
+  ###################
+  ## API CATALOGUE ##
+  ###################
+  api.catalogue:
+    container_name: api.catalogue
+    image: node
+    ports:
+      - "19180:3000"
+    env_file:
+      - ./catalogue/.env.dev
+    volumes:
+      - ./catalogue:/usr/src/app
+      - ./catalogue/node_modules:/usr/src/outside/node_modules
+    working_dir: /usr/src/app
+    command: bash -c 'npm i && npm run start'
+    networks:
+      - lbs.net
+    links:
+      - mongo.cat:dbcat
+  mongo.cat:
+    container_name: mongo.catalogue
+    image: mongo:latest
+    volumes:
+      - ./mongo/data:/var/data
+    working_dir: /var/data
+    networks:
+      - lbs.net
+    ports:
+      - 27018:27017
+  mongo-express:
+    container_name: mongo-express.catalogue
+    image: mongo-express:latest
+    networks:
+      - lbs.net
+    ports:
+      - "8081:8081"
+    links:
+      - mongo.cat:mongo
